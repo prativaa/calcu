@@ -4,13 +4,12 @@ import {View, StyleSheet, Text, Platform, TouchableOpacity} from 'react-native';
 import {BleManager} from 'react-native-ble-plx';
 
 const App = () => {
-  const [deviceName, setDeviceName] = useState({
-    connectedDevice: null,
-  });
+  const [deviceName, setDeviceName] = useState([]);
   const displayDevices = () => {
     const Manager = new BleManager();
     if (Platform.OS === 'android') {
       const subscription = Manager.onStateChange(state => {
+        console.log('State:', state);
         if (state === 'PoweredOn') {
           console.log('Device is powered on');
           Manager.startDeviceScan(null, null, (error, device) => {
@@ -18,14 +17,10 @@ const App = () => {
               console.log('error', error);
             }
             if (device !== null) {
-              console.log(
-                'Device found ----> [id,name]',
-                device.id,
-                device.name,
-              );
+              console.log('Device found [id, name]', device.id, device.name);
               var device_name = device.name;
               console.log('DEVICE NAME:', device_name);
-              setDeviceName({connectedDevice: device_name});
+              setDeviceName([...deviceName, device_name]);
             }
           });
           subscription.remove();
@@ -41,7 +36,14 @@ const App = () => {
         style={styles.buttonDisplay}>
         <Text style={styles.buttonText}>Display connected devices</Text>
       </TouchableOpacity>
-      <Text style={styles.displayText}>{deviceName.connectedDevice}</Text>
+      {deviceName &&
+        deviceName.map((device, index) => {
+          return (
+            <Text style={styles.displayText} key={index}>
+              {device}
+            </Text>
+          );
+        })}
       {/* <Text style={styles.textStyle}>Calcu</Text> */}
     </View>
   );
@@ -82,8 +84,7 @@ const styles = StyleSheet.create({
   },
   displayText: {
     color: 'black',
-    alignItems: 'center',
-    padding: 10,
+    paddingTop: 10,
   },
 });
 export default App;
