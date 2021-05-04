@@ -1,15 +1,29 @@
 import React, {useState} from 'react';
-import {View, StyleSheet, Text, Platform, TouchableOpacity} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Text,
+  Platform,
+  TouchableOpacity,
+  Alert,
+} from 'react-native';
 // import {RNCamera} from 'react-native-camera';
 import {BleManager} from 'react-native-ble-plx';
 
 const App = () => {
   const [deviceName, setDeviceName] = useState([]);
+  const createAlert = status =>
+    Alert.alert('Blutooth Status', status, [
+      {text: 'OK', onPress: () => console.log('OK Pressed')},
+    ]);
+
   const displayDevices = () => {
     const Manager = new BleManager();
     if (Platform.OS === 'android') {
       const subscription = Manager.onStateChange(state => {
         console.log('State:', state);
+        var status = state;
+        createAlert(status);
         if (state === 'PoweredOn') {
           console.log('Device is powered on');
           Manager.startDeviceScan(null, null, (error, device) => {
