@@ -11,14 +11,12 @@ import {
 import {BleManager} from 'react-native-ble-plx';
 
 const App = () => {
-  const [deviceName, setDeviceName] = useState([]);
+  const [deviceName, setDeviceName] = useState([
+    {devicename: '', deviceID: ''},
+  ]);
+
   const createAlert = status =>
     Alert.alert('Blutooth Status', status, [
-      {text: 'OK', onPress: () => console.log('OK Pressed')},
-    ]);
-
-  const deviceFound = device =>
-    Alert.alert('Connected Device', device, [
       {text: 'OK', onPress: () => console.log('OK Pressed')},
     ]);
 
@@ -37,9 +35,13 @@ const App = () => {
             if (device !== null) {
               console.log('Device found [id, name]', device.id, device.name);
               var device_name = device.name;
-              console.log('DEVICE NAME:', device_name);
-              deviceFound(device_name);
-              setDeviceName([...deviceName, device_name]);
+              setDeviceName([
+                {
+                  ...deviceName,
+                  devicename: device_name,
+                  deviceID: device.serviceUUIDs,
+                },
+              ]);
             }
           });
           subscription.remove();
@@ -59,7 +61,7 @@ const App = () => {
         deviceName.map((device, index) => {
           return (
             <Text style={styles.displayText} key={index}>
-              {device}
+              {device.devicename}
             </Text>
           );
         })}
