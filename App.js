@@ -17,6 +17,11 @@ const App = () => {
       {text: 'OK', onPress: () => console.log('OK Pressed')},
     ]);
 
+  const deviceFound = device =>
+    Alert.alert('Connected Device', device, [
+      {text: 'OK', onPress: () => console.log('OK Pressed')},
+    ]);
+
   const displayDevices = () => {
     const Manager = new BleManager();
     if (Platform.OS === 'android') {
@@ -25,7 +30,6 @@ const App = () => {
         var status = state;
         createAlert(status);
         if (state === 'PoweredOn') {
-          console.log('Device is powered on');
           Manager.startDeviceScan(null, null, (error, device) => {
             if (error) {
               console.log('error', error);
@@ -34,6 +38,7 @@ const App = () => {
               console.log('Device found [id, name]', device.id, device.name);
               var device_name = device.name;
               console.log('DEVICE NAME:', device_name);
+              deviceFound(device_name);
               setDeviceName([...deviceName, device_name]);
             }
           });
